@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     //api to update product count using id
-    @PutMapping("/update-product-count/{product-id}")
+    @PutMapping("/update-product-count")
     public ResponseEntity UpdateProductCount(@RequestBody UpdateProductCountDto updateProductCountDto){
         try {
             ProductResponseDto productResponseDto= productService.UpdateProductCount(updateProductCountDto);
@@ -42,11 +42,12 @@ public class ProductController {
     }
 
     //api to get products by category
-    @GetMapping("/get-products-by-category/{productCategory}")
-    public ResponseEntity getAllProductsBYCategory(@PathVariable String productCategory){
+    @PostMapping("/get-products-by-category")
+    public ResponseEntity getAllProductsBYCategory(@RequestBody String productCategory){
         try {
             List<ProductResponseDto> productResponseList=productService.getAllProductsBYCategory(productCategory);
-            return new ResponseEntity(productResponseList, HttpStatus.FOUND);
+            String jsonObj="sample obj return";
+            return new ResponseEntity(productResponseList, HttpStatus.CREATED);
         }
         catch (Exception e){
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);

@@ -2,10 +2,7 @@ package com.example.ShopHop.model;
 
 import com.example.ShopHop.Enum.OrderStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+//@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name="order_info")
+@Builder
 
 public class Ordered {
 
@@ -33,7 +33,7 @@ public class Ordered {
     int noOfItems;
 
     @Column(nullable = false)
-    Double totalOrderValue;
+    int totalOrderValue;
 
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;

@@ -6,6 +6,7 @@ import com.example.ShopHop.dto.RequestDto.UpdateProductCountDto;
 import com.example.ShopHop.dto.RequestDto.ProductRequestDto;
 import com.example.ShopHop.dto.ResponseDto.ProductResponseDto;
 import com.example.ShopHop.exception.InvalidProductException;
+import com.example.ShopHop.model.Item;
 import com.example.ShopHop.model.Product;
 import com.example.ShopHop.repository.ProductRepository;
 import com.example.ShopHop.transformer.ProductTransformer;
@@ -107,7 +108,29 @@ public class ProductService {
         return "Product deleted successfully ";
     }
 
+
+    public void decreaseProductQuantity(Item item) throws InvalidProductException {
+
+        Product product = item.getProduct();
+        if (product.getProductStatus() == ProductStatus.OUT_OF_STOCK) {
+            throw new InvalidProductException("Currently PProduct is out of stock!");
+        }
+        if (product.getQuantity() < item.getRequiredQuantity()) {
+            throw new InvalidProductException("Product quantity is lesser than the required quantity!");
+        }
+        // the above condition is for the case when customer added the same product more than once and during
+        //  placing the order if for any item the same product quantity becomes lesser than the required
+        // quantity than in that case the above Exception will be thrown
+        // in CHECK OUT CART
+
+        product.setQuantity(product.getQuantity() - item.getRequiredQuantity());
+
+        if (product.getQuantity() == 0) {
+            product.setProductStatus(ProductStatus.OUT_OF_STOCK);
+        }
+    }
 }
+
 
 
 

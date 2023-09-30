@@ -64,5 +64,26 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/login-customer")
+    public ResponseEntity loginCustomer(@RequestParam String emailId, @RequestParam String password){
+        try{
+            String str = customerService.loginCustomer(emailId,password);
+            return new ResponseEntity<>(str,HttpStatus.OK);
+        }
+        catch (Exception e ){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/change-password")
+    public ResponseEntity changePassword(@RequestParam String mobNo, @RequestParam String oldPassword, @RequestParam String newPassword){
+        try{
+            String str = customerService.changePassword(mobNo,oldPassword,newPassword);
+            return new ResponseEntity<>(str, HttpStatus.OK);
+        }
+        catch (Exception e ){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
 

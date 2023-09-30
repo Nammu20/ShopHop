@@ -3,8 +3,10 @@ package com.example.ShopHop.controller;
 import com.example.ShopHop.dto.RequestDto.ItemRequestDto;
 import com.example.ShopHop.dto.ResponseDto.CartResponseDto;
 import com.example.ShopHop.dto.ResponseDto.ItemResponseDto;
+import com.example.ShopHop.dto.ResponseDto.OrderedResponseDto;
 import com.example.ShopHop.model.Item;
 import com.example.ShopHop.service.CartService;
+import com.example.ShopHop.dto.RequestDto.CheckOutCartRequestDto;
 import com.example.ShopHop.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,17 @@ public class CartController {
         try {
             String str= cartService.removeItemFromCart(customerEmailId, itemId);
             return new ResponseEntity(str, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity checkOutCart(@RequestBody CheckOutCartRequestDto checkOutCartRequestDto){
+        try {
+            OrderedResponseDto orderedResponseDto= cartService.checkOutCart(checkOutCartRequestDto);
+            return new ResponseEntity(orderedResponseDto, HttpStatus.OK);
         }
         catch (Exception e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

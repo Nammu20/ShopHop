@@ -1,29 +1,46 @@
     $(document).ready(function() {
-        debugger;
+        console.log("js call");
         });
+
+        function BindProductList(category){
+         debugger;
+
+            $.ajax({
+                   type : "POST",
+                   contentType : "application/json",
+                   url : "/product/get-products-by-category",
+                   data : JSON.stringify({productCategory:category}),
+                   dataType : 'json',
+                   success : function(result) {
+                       debugger;
+
+                       console.log(result);
+                       alert("product insert successfully");
+                   },
+                   error : function(e) {
+                       debugger;
+                       if(e.status==400){
+                         alert("error in product");
+                       }
+                       console.log("ERROR: ", e);
+                   }
+            });
+         }
+
          function ajaxPost() {
                 debugger;
-                var Name = $("#txtSellerName").val();
-                var EmailId = $("#txtSellerEmail").val();
-                var Address = $("#txtSellerAddress").val();
-                var MobNo = $("#txtSellerNumber").val();
-                if(Name!='' && EmailId!='' && Address!='' && MobNo!='' ){
+
                  var formData = {
-                                       name:Name,
-                                       emailId:EmailId,
-                                       address:Address,
-                                       mobNo:MobNo
-                                    }
-                }
-                else{
-                alert("Please enter valid input");
-                return;
-                }
+                                     name: "Yogesh",
+                                     quantity:"2",
+                                     price: "100000000",
+                                     productCategory : "FOOTWEAR"
+                                }
 
                     $.ajax({
                         type : "POST",
                         contentType : "application/json",
-                        url : "/seller/add",
+                        url : "/product/add",
                         data : JSON.stringify(formData),
                         dataType : 'json',
                         success : function(result) {
@@ -38,12 +55,12 @@
                                 $("#postResultDiv").html("<strong>Error</strong>");
                             }*/
                             console.log(result);
-                            alert("data insert successfully");
+                            alert("product insert successfully");
                         },
                         error : function(e) {
                             debugger;
                             if(e.status==400){
-                              alert("Duplicate Email Or Mobile number");
+                              alert("error in product");
                             }
                             console.log("ERROR: ", e);
                         }

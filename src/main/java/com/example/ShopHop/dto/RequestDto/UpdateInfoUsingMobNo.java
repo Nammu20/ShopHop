@@ -21,4 +21,6 @@ public class UpdateInfoUsingMobNo {
     String newEmailId;
 
     String newAddress;
+
+    String password;
 }

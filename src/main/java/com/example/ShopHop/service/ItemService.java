@@ -36,15 +36,20 @@ public class ItemService {
             throw new InvalidCustomerException("Customer doesn't exist");
         }
 
+        Item item = ItemTransformer.ItemRequestDtoToItem(itemRequestDto.getRequiredQuantity());
+
         Product product = productOptional.get();
-        if(product.getQuantity()==0){
+
+        if(product == null || product.getQuantity()==0){
             throw new OutOfStockException("Product is out of stock");
+        }
+        else{
+            item.setProduct(product);
         }
         if(product.getQuantity()<itemRequestDto.getRequiredQuantity()){
             throw new InsufficientQuantityException("Sorry! The required quantity is not avaiable");
         }
 
-        Item item = ItemTransformer.ItemRequestDtoToItem(itemRequestDto.getRequiredQuantity());
         return item;
     }
 }

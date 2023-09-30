@@ -20,7 +20,10 @@ public class CustomerRequestDto {
 
         String emailId;
 
-        String address;
+        String password;
 
+    //    Gender gender;
+
+        String address;
 
     }

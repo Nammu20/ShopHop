@@ -3,8 +3,7 @@ package com.example.ShopHop.service;
 import com.example.ShopHop.dto.RequestDto.CustomerRequestDto;
 import com.example.ShopHop.dto.RequestDto.UpdateInfoUsingMobNo;
 import com.example.ShopHop.dto.ResponseDto.CustomerResponseDto;
-import com.example.ShopHop.exception.InvalidEmailException;
-import com.example.ShopHop.exception.InvalidMobNoException;
+import com.example.ShopHop.exception.*;
 import com.example.ShopHop.model.Customer;
 import com.example.ShopHop.repository.CustomerRepository;
 import com.example.ShopHop.transformer.CustomerTransformer;
@@ -87,6 +86,7 @@ public class CustomerService {
             customer.setAddress(updateInfoUsingMobNo.getNewAddress());
         }
 
+
         // saving the Customer in the DB
         Customer updatedCustomer= customerRepository.save(customer);
 
@@ -131,5 +131,37 @@ public class CustomerService {
         return customer.getName() + " deleted successfully!";
     }
 
+    public String loginCustomer(String emailId, String password) throws IncorrectPasswordException, InvalidEmailException, InvalidCustomerException {
+        Customer customer = customerRepository.findByEmailId(emailId);
+        if(customer == null){
+            throw new InvalidCustomerException("Customer not found");
+        }
+        if(!customer.getEmailId().equals(emailId)){
+            throw new InvalidEmailException("Incorrect email-Id");
+        }
+
+        if(!customer.getPassword().equals(password) ){
+            throw new IncorrectPasswordException("You have entered wrong password.");
+        }
+        return " Login succesfully";
+    }
+
+    public String changePassword(String mobNo, String oldPassword, String newPassword) throws IncorrectPasswordException {
+
+        Customer customer = customerRepository.findByPassword(oldPassword);
+        if(!customer.getPassword().equals(oldPassword)){
+            throw new IncorrectPasswordException("Incorrect password! ");
+        }
+
+        UpdateInfoUsingMobNo updateInfoUsingMobNo = new UpdateInfoUsingMobNo();
+        updateInfoUsingMobNo.setNewDob(customer.getDob());
+        updateInfoUsingMobNo.setNewAddress(customer.getAddress());
+        updateInfoUsingMobNo.setNewEmailId(customer.getEmailId());
+        updateInfoUsingMobNo.setNewName(customer.getName());
+        updateInfoUsingMobNo.setPassword(newPassword);
+
+
+        return "Password changed successfully";
+    }
 }
 

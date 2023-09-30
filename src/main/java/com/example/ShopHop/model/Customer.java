@@ -37,6 +37,9 @@ public class Customer {
     @Column(name = "email_id" , unique = true, nullable = false)
     String emailId;
 
+    @Column(name = "password" , unique = true, nullable = false)
+    String password;
+
     @Enumerated(EnumType.STRING)
     Gender gender;
 

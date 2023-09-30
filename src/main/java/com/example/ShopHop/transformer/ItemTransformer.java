@@ -1,5 +1,7 @@
 package com.example.ShopHop.transformer;
 
+import com.example.ShopHop.dto.RequestDto.DirectOrderRequestDto;
+import com.example.ShopHop.dto.RequestDto.ItemRequestDto;
 import com.example.ShopHop.dto.ResponseDto.ItemResponseDto;
 import com.example.ShopHop.model.Item;
 
@@ -9,6 +11,7 @@ public class ItemTransformer {
 
         return Item.builder()
                 .requiredQuantity(quantity)
+
                 .build();
     }
 
@@ -18,6 +21,14 @@ public class ItemTransformer {
                 .quatityAdded(item.getRequiredQuantity())
                 .productName(item.getProduct().getName())
                 .price(item.getProduct().getPrice())
+                .build();
+    }
+
+    public static ItemRequestDto directOrderRequestDtoToItemRequestDto(String email,int productId,int requiredQuantity){
+        return ItemRequestDto.builder()
+                .customerEmailId(email)
+                .productId(productId)
+                .requiredQuantity(requiredQuantity)
                 .build();
     }
 }

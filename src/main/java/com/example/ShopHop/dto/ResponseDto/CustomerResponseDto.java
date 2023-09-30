@@ -9,14 +9,14 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
-@Data
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @Builder
     public class CustomerResponseDto {
 
-        int id;
+        //int id;
 
         String name;
 
@@ -26,7 +26,7 @@ import java.util.List;
 
         String emailId;
 
-        Gender gender;
+     //   Gender gender;
 
         String address;
 

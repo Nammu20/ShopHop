@@ -1,21 +1,21 @@
 package com.example.ShopHop.service;
 
+import com.example.ShopHop.dto.RequestDto.CheckOutCartRequestDto;
 import com.example.ShopHop.dto.RequestDto.ItemRequestDto;
 import com.example.ShopHop.dto.ResponseDto.CartResponseDto;
 import com.example.ShopHop.dto.ResponseDto.ItemResponseDto;
-import com.example.ShopHop.exception.InvalidCartException;
-import com.example.ShopHop.exception.InvalidCustomerException;
-import com.example.ShopHop.exception.InvalidEmailException;
-import com.example.ShopHop.model.Cart;
-import com.example.ShopHop.model.Customer;
-import com.example.ShopHop.model.Item;
-import com.example.ShopHop.model.Product;
+import com.example.ShopHop.dto.ResponseDto.OrderedResponseDto;
+import com.example.ShopHop.exception.*;
+import com.example.ShopHop.model.*;
 import com.example.ShopHop.repository.*;
 import com.example.ShopHop.transformer.CartTransformer;
 import com.example.ShopHop.transformer.ItemTransformer;
+import com.example.ShopHop.transformer.OrderedTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +34,8 @@ public class CartService {
     @Autowired
     ItemRepository itemRepository;
 
-   // @Autowired
-  //  OrderService orderService;
+    @Autowired
+    OrderedService orderedService;
 
     @Autowired
     ProductRepository productRepository;
@@ -135,5 +135,70 @@ public class CartService {
 
         return "Item is removed from your cart!";
     }
+
+    public OrderedResponseDto checkOutCart(CheckOutCartRequestDto checkOutCartRequestDto) throws InvalidCustomerException, InvalidCardException, InvalidOrderException {
+        // 1st Step:- Fetching the customer object from the DB
+        Customer customer= customerRepository.findByEmailId(checkOutCartRequestDto.getCustomerEmailId());
+        if(customer==null){
+            throw new InvalidCustomerException("Invalid customer email id!");
+        }
+
+
+        // 2nd Step:-  Validating cardNo
+        //            a . Validating cardNo length
+        if(checkOutCartRequestDto.getCardNo().length()!=16){
+            throw new InvalidCardException("Incorrect card no!");
+        }
+        //            b. validating cardNo
+        Card card= cardRepository.findByCardNo(checkOutCartRequestDto.getCardNo());
+        if(card==null){
+            throw new InvalidCardException("Invalid card no!");
+        }
+        //            c. validating card and customer
+        if(card.getCustomer()!=customer){
+            throw new InvalidCardException("Card doesn't belong to you!");
+        }
+        //            d. validating card expiry date
+        LocalDate todayDate= LocalDate.now();
+        LocalDate cardExpiryDate= new Date(card.getExpiryDate().getTime()).toLocalDate();
+        if(cardExpiryDate.isBefore(todayDate)){
+            throw new InvalidCardException("Card is expired!");
+        }
+        //          e. validating cvv
+        if(checkOutCartRequestDto.getCvv().length()!=3){
+            throw new InvalidCardException("Incorrect cvv!");
+        }
+        //          f. validating card & cvv
+        if(!card.getCvv().equals(checkOutCartRequestDto.getCvv())){
+            throw new InvalidCardException("Invalid cvv!");
+        }
+
+
+        // 3rd Step:- Now placing an Order
+        Ordered order;
+        try {
+            // this will throw exception when either product goes out of stock or when the quantity of product
+            // goes lesser than the required quantity
+            order= orderedService.placeOrder(customer, card);
+        }
+        catch (Exception e){
+            throw new InvalidOrderException(e.getMessage());
+        }
+        // Now Order is valid
+
+        // Preparing OrderResponse using Builder through OrderTransformer
+
+        OrderedResponseDto orderedResponseDto= OrderedTransformer.orderToOrderResponse(order);
+        // setting itemResponse list attribute of OrderResponse
+//        List<ItemResponse> itemResponseList= new ArrayList<>();
+//        for (Item item:order.getItems()){
+//            //item.setOrder(savedOrder);  // Now we are ordering successfully. So, setting the Order attribute of item
+//            itemResponseList.add(ItemTransformer.itemToItemResponse(item));
+//        }
+//        orderResponse.setItemResponseList(itemResponseList);
+
+        return orderedResponseDto;
+    }
+
 
 }
